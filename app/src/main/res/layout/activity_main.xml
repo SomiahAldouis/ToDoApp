@@ -14,7 +14,10 @@
         android:background="@color/colorPrimary"
         app:tabGravity="fill"
         app:tabMode="fixed"
-        app:tabIndicatorColor="@color/colorAccent"/>
+        app:tabIndicatorColor="@color/colorPrimaryLight"
+        app:tabTextColor="@color/tabtext"
+        style="@style/MyCustomTabLayout"
+        />
 
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"

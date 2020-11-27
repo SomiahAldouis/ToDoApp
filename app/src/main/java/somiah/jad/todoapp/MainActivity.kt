@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         }
         TabLayoutMediator(tabLayout,tabViewPager){ tab, position ->
             when(position){
-                0 -> { tab.text = "ToDo"}
+                0 -> { tab.text = "ToDo" }
                 1 -> { tab.text = "InProcess"}
                 2 -> { tab.text = "Done"}
                 else -> null
