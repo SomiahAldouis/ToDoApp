@@ -38,9 +38,9 @@ class MainActivity : AppCompatActivity() {
         }
         TabLayoutMediator(tabLayout,tabViewPager){ tab, position ->
             when(position){
-                0 -> { tab.setIcon(R.drawable.ic_assignment)}
-                1 -> { tab.setIcon(R.drawable.ic_assignment)}
-                2 -> { tab.setIcon(R.drawable.ic_assignment)}
+                0 -> { tab.text = "ToDo"}
+                1 -> { tab.text = "InProcess"}
+                2 -> { tab.text = "Done"}
                 else -> null
             }
         }.attach()
