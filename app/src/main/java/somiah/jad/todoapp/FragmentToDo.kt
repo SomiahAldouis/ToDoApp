@@ -3,6 +3,7 @@ package somiah.jad.todoapp
 import android.app.ProgressDialog.show
 import android.os.Bundle
 import android.view.*
+import android.view.Gravity.apply
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -12,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class FragmentToDo : Fragment() {
+class FragmentToDo : Fragment() , NewTaskPopUp .Callbacks{
 
     private lateinit var addFab : FloatingActionButton
     private val toDoViewModel:TaskListViewModel by lazy{
@@ -22,32 +23,18 @@ class FragmentToDo : Fragment() {
     private var adapter: ToDoAdapter?= ToDoAdapter(emptyList())
 
 
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        inflater.inflate(R.id.fab, menu)
-//    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
-    private var callBacks: NewTaskPopUp.Callbacks?=null
-    fun onTaskAdd(task: Task){
+  // private var callBacks: NewTaskPopUp.Callbacks?=null
+
+   override fun onTaskAdd(task: Task){
+
         toDoViewModel.addTask(task)
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.fab -> {
 
-                NewTaskPopUp().apply {
-                    setTargetFragment(this@FragmentToDo, 0)
-                    show(this@FragmentToDo.requireFragmentManager(),"Input")
-                }
+   }
 
-                true
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,6 +47,8 @@ class FragmentToDo : Fragment() {
                view.findViewById(R.id.todo_recyclerview_id) as RecyclerView
        toDoRecyclerView.layoutManager = LinearLayoutManager(context)
        toDoRecyclerView.adapter = adapter
+
+        addFab = view.findViewById(R.id.fab) as FloatingActionButton
 
         return view
    }
@@ -74,6 +63,13 @@ class FragmentToDo : Fragment() {
                     updateUI(tasks)
                 }
             })
+
+        addFab.setOnClickListener {
+           NewTaskPopUp().apply {
+               setTargetFragment(this@FragmentToDo, 0)
+               show(this@FragmentToDo.requireFragmentManager(),"Input")
+           }
+        }
     }
 
     private fun updateUI(tasks: List<Task>) {

@@ -25,7 +25,7 @@ class NewTaskPopUp: DialogFragment (){
                     dateText.text.toString(),
                     "ToDo")
                 targetFragment?.let {
-                    (it as Callbacks).onStudentAdd(newTask)
+                    (it as Callbacks).onTaskAdd(newTask)
                 }
             }.setNegativeButton("Cancel"){dialog, _ ->
                 dialog.cancel()
@@ -33,6 +33,6 @@ class NewTaskPopUp: DialogFragment (){
     }
 
     interface Callbacks{
-        fun onStudentAdd(task: Task)
+        fun onTaskAdd(task: Task)
     }
 }
