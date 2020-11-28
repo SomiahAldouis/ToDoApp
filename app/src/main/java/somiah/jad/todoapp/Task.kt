@@ -10,5 +10,5 @@ data class Task(
     val taskId: UUID = UUID.randomUUID(),
     var taskTitle: String = "",
     var taskDetails: String = "",
-    var taskDate: Date = Date(),
+    var taskDate: String = "",
     var taskCategory: String = "")

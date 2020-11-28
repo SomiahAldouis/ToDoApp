@@ -1,28 +1,51 @@
 package somiah.jad.todoapp
 
+import android.app.ProgressDialog.show
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class FragmentToDo : Fragment() {
 
+    private lateinit var addFab : FloatingActionButton
     private val toDoViewModel:TaskListViewModel by lazy{
         ViewModelProviders.of(this).get(TaskListViewModel::class.java)
     }
     private lateinit var toDoRecyclerView: RecyclerView
-    private var adapter: ToDoAdapter?= null
+    private var adapter: ToDoAdapter?= ToDoAdapter(emptyList())
 
+
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        super.onCreateOptionsMenu(menu, inflater)
+//        inflater.inflate(R.id.fab, menu)
+//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
+        setHasOptionsMenu(true)
+    }
+    private var callBacks: NewTaskPopUp.Callbacks?=null
+    fun onTaskAdd(task: Task){
+        toDoViewModel.addTask(task)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.fab -> {
 
+                NewTaskPopUp().apply {
+                    setTargetFragment(this@FragmentToDo, 0)
+                    show(this@FragmentToDo.requireFragmentManager(),"Input")
+                }
+
+                true
+            }
+            else -> return super.onOptionsItemSelected(item)
         }
     }
     override fun onCreateView(
@@ -36,13 +59,24 @@ class FragmentToDo : Fragment() {
        toDoRecyclerView =
                view.findViewById(R.id.todo_recyclerview_id) as RecyclerView
        toDoRecyclerView.layoutManager = LinearLayoutManager(context)
-       // toDoRecyclerView.adapter = adapter
-        updateUI()
+       toDoRecyclerView.adapter = adapter
+
         return view
    }
 
-    private fun updateUI() {
-        val tasks = toDoViewModel.tasks
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        toDoViewModel.allTodoTasks.observe(
+            viewLifecycleOwner,
+            Observer { tasks ->
+                tasks?.let {
+                    //Log.i(TAG, "Got crimes ${crimes.size}")
+                    updateUI(tasks)
+                }
+            })
+    }
+
+    private fun updateUI(tasks: List<Task>) {
         adapter = ToDoAdapter(tasks)
         toDoRecyclerView.adapter = adapter
     }
@@ -76,7 +110,7 @@ class FragmentToDo : Fragment() {
             holder.apply {
                 taskTextTitle.text = task.taskTitle
                 taskTextDetails.text = task.taskDetails
-                taskTextDate.text = task.taskDate.time.toString()
+                taskTextDate.text = task.taskDate
             }
         }
     }

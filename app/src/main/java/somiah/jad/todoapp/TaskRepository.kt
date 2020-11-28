@@ -17,8 +17,12 @@ class TaskRepository private constructor(context: Context) {
         DATABASE_NAME
     ).build()
     private val taskDao = database.taskDao()
-    fun getAllTasks(): LiveData<List<Task>> = taskDao.getAllTasks()
+    fun getAllTasks(category : String): LiveData<List<Task>> = taskDao.getAllTasks(category)
     fun getTask(id: UUID): LiveData<Task?> = taskDao.getTask(id)
+
+    fun addTask(task:Task){
+        taskDao.addTask(task)
+    }
 
     companion object {
             private var INSTANCE: TaskRepository? = null

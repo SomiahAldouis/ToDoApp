@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,7 @@ class FragmentInProcess : Fragment() {
         ViewModelProviders.of(this).get(TaskListViewModel::class.java)
     }
     private lateinit var inProcessRecyclerView: RecyclerView
-    private var adapter: FragmentInProcess.InProcessAdapter?= null
+    private var adapter: FragmentInProcess.InProcessAdapter?= InProcessAdapter(emptyList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,13 +35,26 @@ class FragmentInProcess : Fragment() {
         inProcessRecyclerView =
             view.findViewById(R.id.inprocess_recyclerview_id) as RecyclerView
         inProcessRecyclerView.layoutManager = LinearLayoutManager(context)
-        // toDoRecyclerView.adapter = adapter
-        updateUI()
+        inProcessRecyclerView.adapter = adapter
+
         return view
     }
 
-    private fun updateUI() {
-        val tasks = inProcessViewModel.tasks
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        inProcessViewModel.allInProcessTasks.observe(
+            viewLifecycleOwner,
+            Observer { tasks ->
+                tasks?.let {
+                    //Log.i(TAG, "Got crimes ${crimes.size}")
+                    updateUI(tasks)
+                }
+            })
+    }
+
+    private fun updateUI(tasks: List<Task>) {
+
         adapter = InProcessAdapter(tasks)
         inProcessRecyclerView.adapter = adapter
     }
@@ -74,7 +88,7 @@ class FragmentInProcess : Fragment() {
             holder.apply {
                 taskTextTitle.text = task.taskTitle
                 taskTextDetails.text = task.taskDetails
-                taskTextDate.text = task.taskDate.time.toString()
+                taskTextDate.text = task.taskDate
             }
         }
     }

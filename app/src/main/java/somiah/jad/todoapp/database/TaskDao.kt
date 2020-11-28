@@ -10,8 +10,8 @@ import java.util.*
 @Dao
 interface TaskDao {
 
-    @Query("SELECT * FROM task")
-    fun getAllTasks(): LiveData< List<Task>>
+    @Query("SELECT * FROM task WHERE taskCategory=(:category)")
+    fun getAllTasks(category: String): LiveData< List<Task>>
 
 
     @Query("SELECT * FROM task WHERE taskId=(:id)")

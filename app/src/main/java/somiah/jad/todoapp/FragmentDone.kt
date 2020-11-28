@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,7 @@ class FragmentDone : Fragment() {
         ViewModelProviders.of(this).get(TaskListViewModel::class.java)
     }
     private lateinit var doneRecyclerView: RecyclerView
-    private var adapter: FragmentDone.DoneAdapter?= null
+    private var adapter: FragmentDone.DoneAdapter?= DoneAdapter(emptyList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +36,28 @@ class FragmentDone : Fragment() {
         doneRecyclerView =
             view.findViewById(R.id.done_recyclerview_id) as RecyclerView
         doneRecyclerView.layoutManager = LinearLayoutManager(context)
-        // toDoRecyclerView.adapter = adapter
-        updateUI()
+        doneRecyclerView.adapter = adapter
+
         return view
     }
-    private fun updateUI() {
-        val tasks = doneViewModel.tasks
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        doneViewModel.allDoneTasks.observe(
+            viewLifecycleOwner,
+            Observer { tasks ->
+                tasks?.let {
+                    //Log.i(TAG, "Got crimes ${crimes.size}")
+                    updateUI(tasks)
+                }
+            })
+    }
+
+
+
+
+    private fun updateUI(tasks: List<Task>) {
+
         adapter = DoneAdapter(tasks)
         doneRecyclerView.adapter = adapter
     }
@@ -75,7 +92,7 @@ class FragmentDone : Fragment() {
             holder.apply {
                 taskTextTitle.text = task.taskTitle
                 taskTextDetails.text = task.taskDetails
-                taskTextDate.text = task.taskDate.time.toString()
+                taskTextDate.text = task.taskDate
             }
         }
     }
